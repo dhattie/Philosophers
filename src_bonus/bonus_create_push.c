@@ -28,9 +28,25 @@ int	create_philosofs(t_param *param)
 	return (0);
 }
 
+void	check_philo_staus(t_philosof *philo, t_param *param)
+{
+	int	j;
+
+	j = -1;
+	sem_wait(param->all_eaten);
+	while (++j < param->num_of_ph)
+	{
+		sem_wait(param->all_eaten);
+	}
+	j = -1;
+	while (++j < param->num_of_ph)
+		kill(philo->pid[j], SIGKILL);
+	exit(-1);
+}
+
 int	init_philosofs(t_philosof *philo, t_param *param)
 {
-	int	i;
+	int		i;
 
 	i = -1;
 	while (++i < param->num_of_ph)
@@ -40,6 +56,8 @@ int	init_philosofs(t_philosof *philo, t_param *param)
 		if (!philo->pid[i])
 			philo_action(philo);
 	}
+	if (param->ph_num_to_eat > 0)
+		check_philo_staus(philo, param);
 	finish(param, philo);
 	return (0);
 }
@@ -51,19 +69,26 @@ void	finish(t_param *param, t_philosof *philo)
 
 	j = -1;
 	status = 0;
-	while (++j < param->num_of_ph)
+	while (1)
 	{
 		waitpid(0, &status, 0);
-		kill(philo->pid[j], SIGKILL);
+		if (j >= philo->param->num_of_ph)
+			j = -1;
+		if (status)
+		{
+			j = -1;
+			while (++j < param->num_of_ph)
+				kill(philo->pid[j], SIGKILL);
+			break ;
+		}
 	}
-	sem_close(philo->fork);
-	sem_close(philo->message);
-	exit(0);
 }
 
 int	param_push(int argc, char **argv, t_param *param)
 {
 	param->time_start = get_time();
+	sem_unlink("eat_all");
+	param->all_eaten = sem_open("eat_all", O_CREAT, 0666, 1);
 	param->num_of_ph = int_size(ft_atoi(argv[1]));
 	param->t_to_die = int_size(ft_atoi(argv[2]));
 	param->t_to_eat = int_size(ft_atoi(argv[3]));

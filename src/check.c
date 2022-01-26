@@ -68,8 +68,10 @@ int	check_n_fat_phils(t_philosof **tmp)
 	n_fat_phils = 0;
 	while ((++i < num_of_ph) && ph_num_to_eat)
 	{
+		pthread_mutex_lock(tmp[i]->change_ph_data);
 		if (tmp[i]->number_meals >= ph_num_to_eat)
 			n_fat_phils++;
+		pthread_mutex_unlock(tmp[i]->change_ph_data);
 		if ((n_fat_phils >= num_of_ph))
 			return (-1);
 	}

@@ -46,6 +46,7 @@ typedef struct s_param
 	int			t_to_sleep;
 	int			ph_num_to_eat;
 	int			time_start;
+	t_forks		*all_eaten;
 }				t_param;
 
 typedef struct s_philosof
@@ -53,7 +54,8 @@ typedef struct s_philosof
 	int			id;
 	pid_t		*pid;
 	t_forks		*fork;
-	t_forks		*death;
+	int			death;
+	t_forks		*change_ph_data;
 	t_forks		*message;
 	t_param		*param;
 	int			t_last_meal;

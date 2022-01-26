@@ -16,17 +16,19 @@ void	sem_inits(t_philosof *p)
 {
 	sem_unlink("forks");
 	sem_unlink("message");
+	sem_unlink("change_ph_data");
 	p->fork = sem_open("forks", O_CREAT | O_EXCL, 0666, p->param->num_of_ph);
 	p->message = sem_open("message", O_CREAT | O_EXCL, 0666, 1);
+	p->change_ph_data = sem_open("change_ph_data", O_CREAT | O_EXCL, 0666, 1);
 }
 
 int	treads_start(void *philo)
 {
 	pthread_t	death;
+	t_philosof	*ph;
 
-	if (pthread_create(&death, NULL, check_philo, philo))
-		return (-1);
-	if (pthread_detach(death))
+	ph = (t_philosof *)philo;
+	if (pthread_create(&death, NULL, check_philo, ph))
 		return (-1);
 	return (0);
 }

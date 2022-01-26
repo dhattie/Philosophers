@@ -4,7 +4,7 @@ NAME_BONUS = philo_bonus
 #---------------------------------------------------------------------------------
 #
 CC = gcc -g
-CFLAGS =
+CFLAGS = -Wall -Werror -Wextra
 #---------------------------	Libft library	----------------------------------
 LIB = libft.a
 LDIR = libft

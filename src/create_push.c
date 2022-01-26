@@ -27,7 +27,9 @@ int	create_philosofs(t_param *param)
 	{
 		phils[i] = (t_philosof *) malloc(sizeof (t_philosof));
 		ph_forks[i] = (t_forks *) malloc(sizeof (t_forks));
-		if (!phils[i])
+		phils[i]->change_ph_data = malloc(sizeof (t_forks));
+		pthread_mutex_init(phils[i]->change_ph_data, NULL);
+		if (!phils[i] || !ph_forks[i])
 			return (-1);
 		pthread_mutex_init(ph_forks[i], NULL);
 	}

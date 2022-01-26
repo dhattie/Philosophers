@@ -37,14 +37,18 @@ void	take_forks(t_philosof *philo)
 void	eating(t_philosof *philo)
 {
 	philo_messages(EATING, philo);
-	p_usleep(philo->param->t_to_eat);
-	philo->number_meals++;
+	sem_wait(philo->change_ph_data);
 	philo->t_last_meal = get_time();
+	philo->number_meals++;
+	if (philo->number_meals == philo->param->ph_num_to_eat
+		&& philo->param->ph_num_to_eat > 0)
+	{
+		sem_post(philo->param->all_eaten);
+	}
+	sem_post(philo->change_ph_data);
+	p_usleep(philo->param->t_to_eat);
 	sem_post(philo->fork);
 	sem_post(philo->fork);
-	if (philo->number_meals >= philo->param->ph_num_to_eat
-		&& philo->param->ph_num_to_eat)
-		exit(2);
 	sleeping(philo);
 }
 
@@ -56,7 +60,9 @@ void	*check_philo(void *philo)
 	tmp = (t_philosof *)philo;
 	while (1)
 	{
+		sem_wait(tmp->change_ph_data);
 		difference = get_time() - tmp->t_last_meal;
+		sem_post(tmp->change_ph_data);
 		if ((difference) >= tmp->param->t_to_die)
 			philo_messages(DEATH, philo);
 		usleep(100);

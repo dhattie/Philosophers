@@ -53,6 +53,7 @@ typedef struct s_philosof
 	int			id;
 	t_forks		*left_fork;
 	t_forks		*right_fork;
+	t_forks		*change_ph_data;
 	t_param		*param;
 	int			t_last_meal;
 	int			number_meals;

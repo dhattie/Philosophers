@@ -18,7 +18,7 @@ void	*philo_action(void *philo)
 
 	tmp = philo;
 	if (!(tmp->id % 2))
-		usleep(100);
+		usleep(50);
 	while (1)
 		take_forks(philo);
 	return (NULL);
@@ -42,9 +42,11 @@ void	take_forks(t_philosof *philo)
 int	eating(t_philosof *philo)
 {
 	philo_messages(EATING, philo);
-	p_usleep(philo->param->t_to_eat);
+	pthread_mutex_lock(philo->change_ph_data);
 	philo->t_last_meal = get_time();
 	philo->number_meals++;
+	pthread_mutex_unlock(philo->change_ph_data);
+	p_usleep(philo->param->t_to_eat);
 	if (philo->right_fork)
 		pthread_mutex_unlock(philo->right_fork);
 	if (philo->left_fork)
